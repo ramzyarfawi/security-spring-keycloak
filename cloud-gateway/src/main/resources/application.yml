@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - TokenRelay
+      routes:
+      - id: microservice1
+        uri: http://localhost:8082/
+        predicates:
+        - Path=/ms1/**
+      - id: microservice2
+        uri: http://localhost:8083/
+        predicates:
+          - Path=/ms2/**
+        filters:
+            - RemoveRequestHeader=Cookie         
+
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            token-uri: http://auth.security-server.infra.ubu/auth/realms/security-spring/protocol/openid-connect/token
+            authorization-uri: http://auth.security-server.infra.ubu/auth/realms/security-spring/protocol/openid-connect/auth
+            user-info-uri: http://auth.security-server.infra.ubu/auth/realms/security-spring/protocol/openid-connect/userinfo
+            user-name-attribute: preferred_username
+            issuer-uri: http://auth.security-server.infra.ubu/auth/realms/security-spring
+        registration:
+          keycloak:
+            provider: keycloak
+            client-id: sypel-client
+            client-secret: 67856e67-fbaf-4e88-af47-ae37c54f8eac
+            scope: openid, profile, roles
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8080/login/oauth2/code/sypel-client
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://auth.security-server.infra.ubu/auth/realms/security-spring

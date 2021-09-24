@@ -1,0 +1,12 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: microservice-2
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://auth.security-server.infra.ubu/auth/realms/security-spring/protocol/openid-connect/certs
+
